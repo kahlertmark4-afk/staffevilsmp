@@ -1,0 +1,760 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0a0612">
+<title>EVILSMP Staff Portal</title>
+<meta name="description" content="Staff guidelines, ranks, punishment reference, ticket handling and mentoring for the EVILSMP team.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#08050f; --panel:#120a1f; --panel2:#190f2c; --line:#2b1c47; --line2:#3a2763;
+    --text:#efe9fb; --muted:#a99cc8; --dim:#7d6fa3;
+    --p1:#a855f7; --p2:#8b5cf6; --p3:#c084fc; --accent:#ec4899;
+    --warn:#facc15; --mute:#fb923c; --ban:#f87171; --perm:#ef4444; --ok:#4ade80;
+    --radius:18px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.6; overflow-x:hidden;
+  }
+  /* animated background */
+  .bg{position:fixed; inset:0; z-index:-1; overflow:hidden; pointer-events:none}
+  .bg::after{
+    content:""; position:absolute; inset:0;
+    background-image:linear-gradient(rgba(168,85,247,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(168,85,247,.05) 1px,transparent 1px);
+    background-size:56px 56px;
+    mask-image:radial-gradient(ellipse at 50% 0%,#000 20%,transparent 75%);
+    -webkit-mask-image:radial-gradient(ellipse at 50% 0%,#000 20%,transparent 75%);
+  }
+  .orb{position:absolute; border-radius:50%; filter:blur(90px); opacity:.5; animation:float 18s ease-in-out infinite}
+  .o1{width:520px; height:520px; background:#7c3aed; top:-160px; right:-120px}
+  .o2{width:420px; height:420px; background:#ec4899; opacity:.22; top:35%; left:-160px; animation-delay:-6s}
+  .o3{width:380px; height:380px; background:#4f46e5; opacity:.28; bottom:-120px; right:20%; animation-delay:-11s}
+  @keyframes float{0%,100%{transform:translate(0,0)}50%{transform:translate(30px,-40px)}}
+
+  a{color:var(--p3); text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1120px; margin:0 auto; padding:0 20px}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+
+  /* NAV */
+  header.nav{position:sticky; top:0; z-index:50; background:rgba(8,5,15,.72); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border-bottom:1px solid var(--line)}
+  .nav .wrap{display:flex; align-items:center; gap:18px; height:64px}
+  .brand{display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.05em; color:#fff; white-space:nowrap}
+  .brand:hover{text-decoration:none}
+  .logo{width:30px; height:30px; border-radius:9px; display:grid; place-items:center; background:linear-gradient(135deg,var(--p1),var(--accent)); box-shadow:0 0 24px rgba(168,85,247,.5); font-size:16px}
+  .brand small{color:var(--muted); font-weight:600; letter-spacing:.14em; font-size:.7rem; padding:3px 8px; border:1px solid var(--line2); border-radius:999px}
+  nav.links{display:flex; gap:2px; margin-left:auto; overflow-x:auto; scrollbar-width:none}
+  nav.links::-webkit-scrollbar{display:none}
+  nav.links a{color:var(--muted); padding:8px 13px; border-radius:10px; font-weight:600; font-size:.9rem; white-space:nowrap; transition:background .15s,color .15s}
+  nav.links a:hover{background:var(--panel2); color:var(--text); text-decoration:none}
+  nav.links a.active{background:rgba(168,85,247,.2); color:#fff}
+
+  /* HERO */
+  .hero{padding:96px 0 40px; text-align:center}
+  .eyebrow{display:inline-flex; align-items:center; gap:8px; padding:7px 16px; border:1px solid var(--line2); border-radius:999px; color:var(--p3); font-size:.78rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; background:rgba(168,85,247,.08)}
+  .eyebrow i{width:7px; height:7px; border-radius:50%; background:var(--ok); box-shadow:0 0 10px var(--ok)}
+  .hero h1{font-size:clamp(2.6rem,7vw,5rem); line-height:1.02; margin:22px 0 16px; letter-spacing:-.03em; font-weight:850}
+  .grad{background:linear-gradient(90deg,#c084fc,#a855f7 40%,#ec4899); -webkit-background-clip:text; background-clip:text; color:transparent}
+  .hero p{max-width:640px; margin:0 auto 30px; color:var(--muted); font-size:1.1rem}
+  .btns{display:flex; gap:12px; justify-content:center; flex-wrap:wrap}
+  .btn{display:inline-flex; align-items:center; gap:8px; padding:12px 22px; border-radius:12px; font-weight:700; border:1px solid var(--line2); background:var(--panel2); color:var(--text); cursor:pointer; font-size:.95rem; transition:transform .15s,border-color .15s,box-shadow .15s; font-family:inherit}
+  .btn:hover{transform:translateY(-2px); border-color:var(--p2); text-decoration:none}
+  .btn.primary{background:linear-gradient(135deg,var(--p1),var(--p2)); border-color:transparent; color:#fff; box-shadow:0 8px 30px rgba(139,92,246,.35)}
+  .stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin-top:54px}
+  .stat{background:linear-gradient(180deg,rgba(25,15,44,.8),rgba(18,10,31,.8)); border:1px solid var(--line); border-radius:var(--radius); padding:20px; text-align:left}
+  .stat b{display:block; font-size:2rem; line-height:1.1; color:#fff}
+  .stat span{color:var(--muted); font-size:.88rem}
+  .quick{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin-top:14px}
+  .qcard{display:block; padding:20px; border-radius:var(--radius); border:1px solid var(--line); background:var(--panel); color:var(--text); text-align:left; transition:transform .18s,border-color .18s,background .18s}
+  .qcard:hover{transform:translateY(-4px); border-color:var(--p2); background:var(--panel2); text-decoration:none}
+  .qcard .ic{font-size:1.5rem}
+  .qcard h3{margin:8px 0 4px; font-size:1.02rem}
+  .qcard p{margin:0; color:var(--muted); font-size:.88rem}
+
+  /* SECTIONS */
+  section{padding:84px 0 4px; scroll-margin-top:64px}
+  .head{margin-bottom:28px}
+  .kicker{color:var(--p3); font-size:.78rem; font-weight:800; letter-spacing:.16em; text-transform:uppercase}
+  .head h2{font-size:clamp(1.7rem,3.6vw,2.4rem); margin:6px 0 8px; letter-spacing:-.02em}
+  .head p{margin:0; color:var(--muted); max-width:680px}
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:22px}
+  .grid{display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(290px,1fr))}
+  .reveal{opacity:0; transform:translateY(16px); transition:opacity .6s ease,transform .6s ease}
+  .reveal.in{opacity:1; transform:none}
+
+  /* CONDUCT */
+  .rule{display:flex; gap:16px}
+  .rule .num{flex:none; width:40px; height:40px; border-radius:12px; display:grid; place-items:center; background:rgba(168,85,247,.15); color:var(--p3); font-weight:800}
+  .rule h3{margin:0 0 4px; font-size:1.02rem}
+  .rule p{margin:0; color:var(--muted); font-size:.93rem}
+
+  /* RANKS */
+  .chain{display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:18px}
+  .chain span{padding:5px 11px; border-radius:999px; font-size:.78rem; font-weight:700; border:1px solid color-mix(in srgb,var(--c) 45%,transparent); color:var(--c); background:color-mix(in srgb,var(--c) 10%,transparent)}
+  .chain em{color:var(--dim); font-style:normal; font-size:.8rem}
+  .ladder{display:grid; grid-template-columns:280px 1fr; gap:16px; align-items:start}
+  .rank-list{display:flex; flex-direction:column; gap:6px}
+  .rank-btn{display:flex; align-items:center; gap:12px; width:100%; text-align:left; padding:11px 14px; border-radius:12px; border:1px solid var(--line); background:var(--panel); color:var(--text); cursor:pointer; font:inherit; font-weight:650; transition:all .15s}
+  .rank-btn:hover{border-color:var(--c); background:var(--panel2)}
+  .rank-btn.on{border-color:var(--c); background:color-mix(in srgb,var(--c) 14%,var(--panel)); box-shadow:0 0 0 1px var(--c) inset}
+  .rank-btn .dot{width:10px; height:10px; border-radius:50%; background:var(--c); box-shadow:0 0 12px var(--c); flex:none}
+  .rank-btn .lv{margin-left:auto; color:var(--dim); font-size:.75rem; font-weight:700}
+  .detail{position:sticky; top:84px; min-height:300px; border-color:var(--line2)}
+  .detail h3{margin:0; font-size:1.7rem; color:var(--c)}
+  .detail .sub{color:var(--muted); font-size:.88rem; margin-bottom:16px}
+  .detail h4{margin:18px 0 8px; font-size:.75rem; letter-spacing:.14em; text-transform:uppercase; color:var(--dim)}
+  .detail ul{margin:0; padding-left:18px; color:var(--text)}
+  .detail li{margin:5px 0}
+  .detail .box{background:var(--panel2); border:1px solid var(--line); border-radius:12px; padding:12px 14px; color:var(--muted); font-size:.93rem}
+  .note-dev{margin-top:14px; padding:14px 16px; border-radius:14px; border:1px dashed var(--line2); color:var(--muted); font-size:.9rem}
+
+  /* COMMANDS */
+  .cmdcard{position:relative; overflow:hidden}
+  .cmdcard::before{content:""; position:absolute; inset:0 0 auto 0; height:3px; background:var(--c)}
+  .cmdcard h3{margin:4px 0 2px; color:var(--c); font-size:1.1rem}
+  .cmdcard .sub{color:var(--dim); font-size:.82rem; margin-bottom:10px}
+  .cmd{display:flex; flex-direction:column; gap:1px; width:100%; text-align:left; background:transparent; border:0; border-top:1px solid var(--line); padding:9px 4px; cursor:pointer; color:var(--text); font:inherit; transition:background .15s}
+  .cmd:hover{background:rgba(168,85,247,.08)}
+  .cmd code{color:#e9d5ff; font-size:.85rem; word-break:break-word}
+  .cmd span{color:var(--muted); font-size:.82rem}
+
+  /* PUNISHMENTS */
+  .tools{display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:14px}
+  .search,.select{padding:12px 16px; border-radius:12px; border:1px solid var(--line2); background:var(--panel); color:var(--text); font-size:.95rem; outline:none; font-family:inherit}
+  .search{flex:1 1 240px}
+  .search:focus,.select:focus{border-color:var(--p2)}
+  .chips{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px}
+  .chip{padding:8px 15px; border-radius:999px; border:1px solid var(--line2); background:var(--panel); color:var(--muted); font-weight:650; font-size:.85rem; cursor:pointer; transition:all .15s; font-family:inherit}
+  .chip:hover{color:var(--text); border-color:var(--p2)}
+  .chip.on{background:rgba(168,85,247,.22); color:#fff; border-color:var(--p2)}
+  .tablewrap{overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); background:var(--panel)}
+  table{width:100%; border-collapse:collapse; min-width:760px}
+  th,td{padding:14px 16px; text-align:left; border-bottom:1px solid var(--line); vertical-align:middle}
+  th{font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; color:var(--dim); background:var(--panel2); position:sticky; top:0}
+  tr:last-child td{border-bottom:none}
+  tbody tr:hover{background:rgba(168,85,247,.05)}
+  td.off b{display:block}
+  td.off span{color:var(--muted); font-size:.84rem}
+  .steps-row{display:flex; align-items:center; flex-wrap:wrap; gap:6px}
+  .steps-row i{color:var(--dim); font-style:normal; font-size:.8rem}
+  .tag{display:inline-block; padding:4px 10px; border-radius:8px; font-size:.8rem; font-weight:750; white-space:nowrap}
+  .t-mute{background:rgba(251,146,60,.14); color:var(--mute)}
+  .t-ban{background:rgba(248,113,113,.14); color:var(--ban)}
+  .t-perm{background:rgba(239,68,68,.24); color:#fecaca}
+  .t-type-mute{border:1px solid rgba(251,146,60,.4); color:var(--mute); background:transparent}
+  .t-type-ban{border:1px solid rgba(248,113,113,.4); color:var(--ban); background:transparent}
+  .empty{padding:30px; text-align:center; color:var(--muted)}
+  .note{margin-top:14px; color:var(--muted); font-size:.88rem}
+  .two{display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); margin-top:24px}
+  pre.tpl{margin:12px 0; padding:14px 16px; background:#0c0716; border:1px solid var(--line); border-radius:12px; color:#e9d5ff; font-size:.85rem; overflow-x:auto}
+  .card h3{margin:0 0 6px; font-size:1.05rem}
+  .card p{color:var(--muted); margin:6px 0}
+  .mini-steps{margin:10px 0 0; padding:0; list-style:none; counter-reset:m; display:grid; gap:10px}
+  .mini-steps li{display:flex; gap:12px; color:var(--muted); font-size:.93rem}
+  .mini-steps li::before{counter-increment:m; content:counter(m); flex:none; width:26px; height:26px; border-radius:8px; display:grid; place-items:center; background:rgba(168,85,247,.16); color:var(--p3); font-weight:800; font-size:.8rem}
+  .mini-steps b{color:var(--text)}
+
+  /* TICKETS */
+  .pill{display:inline-block; padding:3px 10px; border-radius:999px; font-size:.78rem; font-weight:700; background:rgba(168,85,247,.14); color:var(--p3); margin:2px 4px 2px 0}
+  .copyline{display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; padding:11px 14px; border-radius:12px; border:1px solid var(--line); background:var(--panel2); color:var(--text); cursor:pointer; font:inherit; margin-top:8px; text-align:left}
+  .copyline:hover{border-color:var(--p2)}
+  .copyline code{color:#e9d5ff; font-size:.88rem}
+  .copyline span{color:var(--muted); font-size:.82rem; text-align:right}
+  .stepper{display:grid; gap:12px; counter-reset:s}
+  .step{display:flex; gap:16px; align-items:flex-start}
+  .step::before{counter-increment:s; content:counter(s); flex:none; width:36px; height:36px; border-radius:50%; display:grid; place-items:center; font-weight:800; background:linear-gradient(135deg,var(--p1),var(--accent)); color:#fff}
+  .step h3{margin:2px 0 2px; font-size:1rem}
+  .step p{margin:0; color:var(--muted); font-size:.93rem}
+
+  /* MENTORING */
+  details{background:var(--panel); border:1px solid var(--line); border-radius:14px; margin-bottom:10px; overflow:hidden}
+  details[open]{border-color:var(--line2); background:var(--panel2)}
+  summary{cursor:pointer; list-style:none; padding:16px 18px; font-weight:700; display:flex; align-items:center; gap:14px}
+  summary::-webkit-details-marker{display:none}
+  summary .n{width:30px; height:30px; border-radius:9px; display:grid; place-items:center; background:rgba(168,85,247,.16); color:var(--p3); font-size:.85rem}
+  summary::after{content:"+"; margin-left:auto; color:var(--p3); font-size:1.3rem}
+  details[open] summary::after{content:"–"}
+  details .body{padding:0 18px 18px 62px; color:var(--muted); font-size:.95rem}
+  details .body ul{padding-left:18px; margin:8px 0}
+  blockquote{margin:10px 0 0; padding:10px 14px; border-left:3px solid var(--p2); background:rgba(168,85,247,.08); border-radius:0 10px 10px 0; color:var(--text); font-style:italic}
+  .check li,.cross li,.star li{list-style:none; margin:8px 0; padding-left:30px; position:relative; color:var(--muted); font-size:.93rem}
+  .check,.cross,.star{padding:0; margin:12px 0 0}
+  .check li::before{content:"✓"; position:absolute; left:0; color:var(--ok); font-weight:800}
+  .cross li::before{content:"✕"; position:absolute; left:0; color:var(--ban); font-weight:800}
+  .star li::before{content:"★"; position:absolute; left:0; color:var(--warn)}
+
+  /* POLICIES */
+  .pol h3{display:flex; align-items:center; gap:10px}
+  .pol ul{margin:10px 0 0; padding-left:18px; color:var(--muted); font-size:.93rem}
+  .pol li{margin:5px 0}
+
+  footer{margin-top:110px; border-top:1px solid var(--line); padding:34px 0 60px; color:var(--dim); font-size:.88rem; text-align:center}
+  .toast{position:fixed; left:50%; bottom:28px; transform:translate(-50%,20px); opacity:0; background:var(--panel2); border:1px solid var(--p2); color:#fff; padding:10px 18px; border-radius:12px; font-weight:600; font-size:.9rem; transition:all .25s; pointer-events:none; z-index:99; box-shadow:0 10px 40px rgba(0,0,0,.5)}
+  .toast.show{opacity:1; transform:translate(-50%,0)}
+  .top{position:fixed; right:20px; bottom:24px; width:44px; height:44px; border-radius:14px; border:1px solid var(--line2); background:var(--panel2); color:#fff; cursor:pointer; font-size:1.1rem; opacity:0; pointer-events:none; transition:all .2s; z-index:60}
+  .top.show{opacity:1; pointer-events:auto}
+  .top:hover{border-color:var(--p2)}
+
+  @media (max-width:860px){
+    .ladder{grid-template-columns:1fr}
+    .detail{position:static}
+  }
+  @media (max-width:640px){
+    .hero{padding:64px 0 24px}
+    .brand small{display:none}
+    details .body{padding-left:18px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{animation:none!important; transition:none!important}
+    .reveal{opacity:1; transform:none}
+  }
+</style>
+<noscript><style>.reveal{opacity:1;transform:none}</style></noscript>
+</head>
+<body>
+
+<div class="bg" aria-hidden="true"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div></div>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#home"><span class="logo">🛡️</span>EVILSMP <small>STAFF</small></a>
+    <nav class="links" id="nav" aria-label="Sections">
+      <a href="#home">Home</a>
+      <a href="#conduct">Conduct</a>
+      <a href="#ranks">Ranks</a>
+      <a href="#commands">Commands</a>
+      <a href="#punishments">Punishments</a>
+      <a href="#tickets">Tickets</a>
+      <a href="#mentoring">Mentoring</a>
+      <a href="#policies">Policies</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- HOME -->
+  <section id="home" class="hero" style="padding-top:96px">
+    <span class="eyebrow"><i></i>Staff Portal</span>
+    <h1>Keep <span class="grad">EVILSMP</span><br>fair, safe and fun.</h1>
+    <p>Your single place for conduct rules, the chain of command, commands, the punishment reference, ticket handling and mentoring.</p>
+    <div class="btns">
+      <a class="btn primary" href="#punishments">Punishment guide</a>
+      <a class="btn" href="#ranks">Chain of command</a>
+      <a class="btn" id="discordBtn" href="#" hidden target="_blank" rel="noopener">Discord</a>
+      <button class="btn" id="ipBtn" type="button" hidden>Copy server IP</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><b id="sRanks">0</b><span>Staff ranks</span></div>
+      <div class="stat"><b id="sPun">0</b><span>Punishment entries</span></div>
+      <div class="stat"><b id="sCmd">0</b><span>Commands listed</span></div>
+      <div class="stat"><b id="sPanels">0</b><span>Ticket panels</span></div>
+    </div>
+    <div class="quick">
+      <a class="qcard" href="#ranks"><div class="ic">🪜</div><h3>Ranks &amp; escalation</h3><p>Who to contact, and when.</p></a>
+      <a class="qcard" href="#punishments"><div class="ic">⚖️</div><h3>Punishments</h3><p>Filterable offense ladder.</p></a>
+      <a class="qcard" href="#tickets"><div class="ic">🎫</div><h3>Ticket handling</h3><p>Claim, rename, resolve, close.</p></a>
+      <a class="qcard" href="#mentoring"><div class="ic">🎓</div><h3>Mentoring</h3><p>Train new staff the right way.</p></a>
+    </div>
+  </section>
+
+  <!-- CONDUCT -->
+  <section id="conduct">
+    <div class="head reveal">
+      <div class="kicker">Section 01</div>
+      <h2>Staff conduct</h2>
+      <p>Every staff member represents EVILSMP in-game and on Discord. These expectations apply to everyone, at all times.</p>
+    </div>
+    <div class="grid" id="conductGrid"></div>
+  </section>
+
+  <!-- RANKS -->
+  <section id="ranks">
+    <div class="head reveal">
+      <div class="kicker">Section 02</div>
+      <h2>Ranks &amp; chain of command</h2>
+      <p>Escalate only when needed, and always to the lowest appropriate rank first. Select a rank to see its role.</p>
+    </div>
+    <div class="chain reveal" id="chain"></div>
+    <div class="ladder reveal">
+      <div class="rank-list" id="rankList"></div>
+      <div class="card detail" id="rankDetail"></div>
+    </div>
+    <div class="note-dev reveal">🛠️ <b>Developers</b> are not part of the moderation chain. They report to the Owner and should only be contacted for bugs, machine errors and plugin issues. Always include a recording and steps to reproduce.</div>
+  </section>
+
+  <!-- COMMANDS -->
+  <section id="commands">
+    <div class="head reveal">
+      <div class="kicker">Section 03</div>
+      <h2>Staff commands</h2>
+      <p>Each rank includes everything from the ranks below it. Click a command to copy it. Using <code>/punish &lt;player&gt;</code> is required for all punishments; this is only an overview of permissions.</p>
+    </div>
+    <div class="grid" id="cmdGrid"></div>
+  </section>
+
+  <!-- PUNISHMENTS -->
+  <section id="punishments">
+    <div class="head reveal">
+      <div class="kicker">Section 04</div>
+      <h2>Punishments</h2>
+      <p>Each offense escalates step by step with every repeat. Use judgement: context, intent and history can raise or lower a punishment.</p>
+    </div>
+    <div class="tools">
+      <input class="search" id="search" type="search" placeholder="Search offenses…" aria-label="Search offenses">
+      <label class="mono" style="color:var(--dim);font-size:.85rem" for="lvl">I can issue as:</label>
+      <select class="select" id="lvl"></select>
+    </div>
+    <div class="chips" id="chips"></div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Offense</th><th>Type</th><th>Escalation (1st → last)</th><th>Rank</th></tr></thead>
+        <tbody id="punBody"></tbody>
+      </table>
+      <div class="empty" id="punEmpty" hidden>No offenses match your filters.</div>
+    </div>
+    <p class="note">Take a screenshot of the punishment first. Mute / ban evasion, IP bans and IP mutes are handled by Admin+.</p>
+
+    <div class="two">
+      <div class="card reveal">
+        <h3>📝 Required log format</h3>
+        <p>Log every in-game punishment in <b>#staff-reports</b>. Missing logs can lead to a warning or a strike.</p>
+        <pre class="tpl" id="logTpl">Username: &lt;user&gt;
+Reason: &lt;detailed explanation&gt;
+Duration: &lt;time&gt;
+Proof: &lt;screenshots / video / logs&gt;</pre>
+        <button class="btn" type="button" data-copy="Username: \nReason: \nDuration: \nProof: ">Copy template</button>
+      </div>
+      <div class="card reveal">
+        <h3>💬 Discord punishments</h3>
+        <ol class="mini-steps">
+          <li><div><b>Copy the user ID</b> (right-click → Copy User ID, Developer Mode must be on).</div></li>
+          <li><div><b>Check history</b> with <code>?modlogs &lt;ID&gt;</code> before deciding.</div></li>
+          <li><div><b>Apply it</b> with <code>?mute &lt;ID&gt; &lt;duration&gt; &lt;reason&gt;</code>.</div></li>
+          <li><div><b>Log it</b> with ID, reason, duration, proof and context.</div></li>
+          <li><div><b>Escalate</b> severe or repeat cases to Admin+, following the hierarchy.</div></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- TICKETS -->
+  <section id="tickets">
+    <div class="head reveal">
+      <div class="kicker">Section 05</div>
+      <h2>Ticket handling</h2>
+      <p>The same process for every ticket, so players always get a consistent experience.</p>
+    </div>
+
+    <div class="two" style="margin-top:0">
+      <div class="card reveal">
+        <h3>Process</h3>
+        <div class="stepper" id="ticketSteps" style="margin-top:14px"></div>
+      </div>
+      <div class="card reveal">
+        <h3>Renaming templates</h3>
+        <p>Rename your ticket so higher-ups can see its status at a glance. Click to copy.</p>
+        <div id="renames"></div>
+        <h3 style="margin-top:22px">Bot commands</h3>
+        <p>Use these sparingly. Log every request in the staff mod-requests channel.</p>
+        <div id="botcmds"></div>
+      </div>
+    </div>
+
+    <div class="head reveal" style="margin-top:44px">
+      <h3 style="margin:0 0 4px;font-size:1.3rem">Ticket panels</h3>
+      <p>Who can access which panel.</p>
+    </div>
+    <div class="tablewrap reveal">
+      <table style="min-width:560px">
+        <thead><tr><th>Panel</th><th>Access</th></tr></thead>
+        <tbody id="panelBody"></tbody>
+      </table>
+    </div>
+    <p class="note"><b>Staff Team</b> = Helper to Sr. Mod. <b>Staff Management</b> = Sr. Admin, Admin with permissions and Manager+.</p>
+
+    <div class="card reveal" style="margin-top:24px">
+      <h3>Appeals</h3>
+      <ol class="mini-steps">
+        <li><div><b>Player opens an appeal</b> with their username and the punishment reason.</div></li>
+        <li><div><b>Review the evidence:</b> logs, screenshots and the original staff member's notes. Never review your own punishments.</div></li>
+        <li><div><b>Discuss if unsure.</b> Ask another staff member or an Admin before reducing or removing a long ban.</div></li>
+        <li><div><b>Reply clearly:</b> accepted, reduced or denied, always with a short, polite reason.</div></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- MENTORING -->
+  <section id="mentoring">
+    <div class="head reveal">
+      <div class="kicker">Section 06</div>
+      <h2>Mentor guide</h2>
+      <p>A mentor's job is not to do everything for a trainee. It is to teach them how to do it themselves, and to help someone grow.</p>
+    </div>
+    <div id="mentorSteps" class="reveal"></div>
+    <div class="grid" style="margin-top:22px">
+      <div class="card reveal"><h3>🚫 Mentors should never</h3><ul class="cross" id="never"></ul></div>
+      <div class="card reveal"><h3>💡 Good mentor habits</h3><ul class="star" id="habits"></ul></div>
+      <div class="card reveal"><h3>📝 Ready to recommend completion?</h3><p>Only when your trainee can:</p><ul class="check" id="ready"></ul></div>
+    </div>
+  </section>
+
+  <!-- POLICIES -->
+  <section id="policies">
+    <div class="head reveal">
+      <div class="kicker">Section 07</div>
+      <h2>Team policies</h2>
+      <p>Fair rules that keep the team accountable and active.</p>
+    </div>
+    <div class="grid" id="polGrid"></div>
+    <p class="note" style="margin-top:22px">Final note: everything in this portal is internal. Sharing logs, screenshots or procedures with players or outside parties compromises player safety and the stability of the server.</p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">© <span id="year"></span> EVILSMP · Staff Portal · Not affiliated with Mojang or Microsoft.</div>
+</footer>
+
+<button class="top" id="top" type="button" aria-label="Back to top">↑</button>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ═══════════════ EDIT YOUR CONTENT HERE ═══════════════ */
+const SITE = {
+  discord: "",   // e.g. "https://discord.gg/yourinvite"  (empty = hide button)
+  ip: ""         // e.g. "play.yourserver.net"            (empty = hide button)
+};
+
+const CONDUCT = [
+  { t: "Stay calm and professional", d: "Never argue, insult or react, even when players are hostile. De-escalate with professionalism, not toxicity." },
+  { t: "Be fair and unbiased", d: "No favoritism in punishments, tickets or reports. Treat every player the same." },
+  { t: "Evidence first", d: "Screenshot, clip or log before every punishment, and attach it to your reason." },
+  { t: "Use commands as intended", d: "Permissions are for moderation only, never for personal gain, revenge or fun." },
+  { t: "Keep it confidential", d: "Never leak logs, screenshots, procedures or staff discussions. Leaks lead to removal." },
+  { t: "One approved staff account", d: "Moderate only on your approved account. Never impersonate players or staff, and tell Admin+ before changing your username." },
+  { t: "Meet your weekly minimum", d: "Reach the activity requirement of your rank and tell Admin+ before long periods of inactivity." },
+  { t: "Own your mistakes", d: "Report accidental or incorrect punishments to Admin+ immediately. Honesty is always respected." },
+  { t: "Going away", d: "Helpers log off when stepping away. Other ranks use /vanish to avoid confusion or moderation gaps." },
+  { t: "Keep staff channels clean", d: "No drama and no clutter. Use correct grammar and tone when representing EVILSMP publicly." }
+];
+
+/* Order matters: lowest → highest (this is the chain of command) */
+const RANKS = [
+  { n: "Helper", c: "#4ade80", duties: ["First point of contact for players", "Answer basic questions and moderate chat", "Issue minor punishments (mutes) and point players to tickets"], contact: "A player needs general assistance, clarification or chat moderation." },
+  { n: "Jr. Mod", c: "#2dd4bf", duties: ["Handle report tickets for chat offenses", "Issue minor bans for simple rule violations", "Use warns and temporary bans"], contact: "A report goes beyond simple chat moderation." },
+  { n: "Moderator", c: "#38bdf8", duties: ["Handle griefing reports and perform rollbacks", "Issue intermediate punishments", "Assist Jr. Mods with their cases"], contact: "A case involves griefing, claim issues or item recovery." },
+  { n: "Sr. Mod", c: "#6366f1", duties: ["Run full investigations", "Handle appeals and difficult disputes", "Mentor and support lower staff"], contact: "An issue is too complex for a Moderator or involves an appeal." },
+  { n: "Jr. Admin", c: "#a855f7", duties: ["Handle advanced reports", "Take on tasks that need elevated permissions", "Work under Admin supervision"], contact: "You need elevated permissions that lower ranks do not have." },
+  { n: "Admin", c: "#c084fc", duties: ["Oversee advanced reports, appeals and rank transfers", "Handle region and high-level actions", "Handle IP bans, IP mutes and evasion cases"], contact: "A high-level situation needs full command access. Admins are highly trusted, so stay vigilant." },
+  { n: "Sr. Admin", c: "#e879f9", duties: ["Manage complex cases and supervise Admins", "Make sure staff operations run smoothly", "Last point of contact for severe or critical issues"], contact: "Admins are unavailable, or an urgent high-severity case needs help. Do not ping otherwise." },
+  { n: "Manager", c: "#f472b6", duties: ["Lead day-to-day staff operations", "Handle recruitment, training and evaluations", "Support the Admin team"], contact: "A staff matter that Admin+ cannot resolve alone." },
+  { n: "Head Manager", c: "#fb7185", duties: ["Lead the management team", "Handle escalated staff matters", "Align the team with server goals"], contact: "A management-level decision or conflict." },
+  { n: "Staff Manager", c: "#fb923c", duties: ["Oversee staff activity and strikes", "Run evaluations and promotions together with management", "Keep the team healthy and accountable"], contact: "Strikes, inactivity, promotions or other team-wide issues." },
+  { n: "Co-Owner", c: "#fbbf24", duties: ["Strategic decisions together with the Owner", "Final escalation below the Owner", "Oversee all departments"], contact: "Only for top-level decisions. Use the chain first." },
+  { n: "Owner", c: "#facc15", duties: ["Final authority over the whole server and team", "Direct line to Developers", "Sets long-term direction"], contact: "Last resort. Developers report directly to the Owner." }
+];
+
+/* Command overview per rank. Higher ranks include everything below. [command, description] */
+const COMMANDS = [
+  { rank: "Helper", c: "#4ade80", cmds: [
+    ["/mute <player> <time> <reason>", "Mute a player"],
+    ["/unmute <player>", "Unmute a player"],
+    ["/mutelist", "View active mutes"],
+    ["/history <player>", "View punishment history"],
+    ["/openinv <player>", "Inspect only, never take items"],
+    ["?mute <discord-id> <duration> <reason>", "Mute on Discord"],
+    ["StaffChat · SocialSpy · AntiCheat alerts", "Chat and alert tools"]
+  ]},
+  { rank: "Jr. Mod", c: "#2dd4bf", cmds: [
+    ["/warn <player> <reason>", "Warn a player"],
+    ["/tempban <player> <time> <reason>", "Temporary ban"],
+    ["/ban <player> <reason>", "Permanent ban"],
+    ["/unban <player>", "Unban a player"],
+    ["/tp <player>", "Teleport to a player"],
+    ["/tpo <player>", "Force teleport"],
+    ["/tppos <x> <y> <z>", "Teleport to coordinates"],
+    ["/tpoffline <player>", "Teleport to last known location"],
+    ["/gamemode spectator", "Spectator mode (also survival)"],
+    ["/co lookup", "CoreProtect lookup (shortcut: /co l)"],
+    ["/vanish", "Hide from players"]
+  ]},
+  { rank: "Moderator", c: "#38bdf8", cmds: [
+    ["/openinv <player>", "Open and edit inventories"],
+    ["/openender <player>", "Open and edit ender chests"],
+    ["/opencontainer", "Open containers remotely"],
+    ["/axir restore <player>", "Restore an inventory"],
+    ["/axir teleport <player>", "Go to a saved inventory location"],
+    ["/axir view <player>", "View saved inventories"],
+    ["/co rollback", "Roll back world changes"],
+    ["/co restore", "Restore a previous state"],
+    ["/co undo", "Undo a CoreProtect action"],
+    ["/fly", "Toggle flight"],
+    ["/tphere <player>", "Teleport a player to you"]
+  ]},
+  { rank: "Sr. Mod", c: "#6366f1", cmds: [
+    ["/searchinv", "Search inventories"],
+    ["/gamemode creative", "Creative mode"],
+    ["/kick <player> <reason>", "Kick a player"]
+  ]},
+  { rank: "Admin and above", c: "#c084fc", note: "Full command access (*), bypasses command whitelists", cmds: [
+    ["/banip <player>", "IP ban (Admin+ only)"],
+    ["/ipmute <player>", "IP mute (Admin+ only)"],
+    ["Full server permissions", "Highly trusted, stay vigilant"]
+  ]}
+];
+
+const CATEGORIES = ["All", "Chat", "Gameplay", "Cheating", "Severe"];
+
+/* Minimum level: 0 Helper+, 1 Jr. Mod+, 2 Sr. Mod+, 3 Admin+  ·  type: "mute" | "ban" */
+const LEVELS = [
+  { label: "Helper+",  color: "#4ade80" },
+  { label: "Jr. Mod+", color: "#2dd4bf" },
+  { label: "Sr. Mod+", color: "#6366f1" },
+  { label: "Admin+",   color: "#c084fc" }
+];
+
+const PUNISHMENTS = [
+  /* CHAT */
+  { cat: "Chat", off: "Spamming", d: "Repeating messages or commands (4+ in a row)", type: "mute", lvl: 0, steps: ["30m", "2h", "6h", "12h"] },
+  { cat: "Chat", off: "Chat flooding", d: "10+ repeated letters or numbers", type: "mute", lvl: 0, steps: ["30m", "2h", "6h", "12h"] },
+  { cat: "Chat", off: "Trolling / rage-baiting", d: "Provoking players on purpose", type: "mute", lvl: 0, steps: ["2h", "12h", "24h", "7d"] },
+  { cat: "Chat", off: "Toxicity / bullying", d: "Being rude or hostile towards others", type: "mute", lvl: 0, steps: ["1h", "3h", "6h", "12h", "24h"] },
+  { cat: "Chat", off: "Harassment", d: "Targeted harassment of a player", type: "mute", lvl: 0, steps: ["1d", "3d", "7d", "Perma mute"] },
+  { cat: "Chat", off: "Discrimination", d: "Racism, homophobia, sexism or similar", type: "mute", lvl: 0, steps: ["1d", "3d", "7d", "Perma mute"] },
+  { cat: "Chat", off: "NSFW / inappropriate chat", d: "In-game and Discord", type: "mute", lvl: 0, steps: ["12h", "3d", "7d", "14d", "Perma mute"] },
+  { cat: "Chat", off: "Sensitive topics", d: "Religion, politics and similar", type: "mute", lvl: 0, steps: ["12h", "3d", "7d", "30d"] },
+  { cat: "Chat", off: "Filter bypass", d: "Slurs or swearing with altered spelling", type: "mute", lvl: 0, steps: ["1h", "1d", "7d", "14d", "Perma mute"] },
+  { cat: "Chat", off: "Advertising", d: "Links, other server IPs. On Discord this is a permanent ban", type: "mute", lvl: 0, steps: ["Perma mute"] },
+  { cat: "Chat", off: "Staff disrespect", d: "Ask a higher rank before punishing", type: "mute", lvl: 0, steps: ["12h", "1d", "3d"] },
+  /* GAMEPLAY */
+  { cat: "Gameplay", off: "Griefing", d: "Destroying or defacing builds. Roll back afterwards", type: "ban", lvl: 1, steps: ["1d", "3d", "7d", "14d"] },
+  { cat: "Gameplay", off: "TP trapping", d: "Trapping players after a teleport request", type: "ban", lvl: 1, steps: ["2d", "6d", "10d", "21d"] },
+  { cat: "Gameplay", off: "Combat violations", d: "AFK killing, terrain abuse, claim camping, baiting into claims", type: "ban", lvl: 1, steps: ["1d", "3d", "7d"] },
+  { cat: "Gameplay", off: "Minor bug abuse", d: "Small unintended mechanics", type: "ban", lvl: 1, steps: ["12h", "1d", "3d", "7d"] },
+  { cat: "Gameplay", off: "Major bug abuse", d: "Serious exploits with real impact", type: "ban", lvl: 1, steps: ["3d", "7d", "14d", "30d"] },
+  { cat: "Gameplay", off: "Inappropriate build / skin / username", d: "Ban until it is changed; they may open an appeal", type: "ban", lvl: 1, steps: ["Ban until fixed"] },
+  { cat: "Gameplay", off: "Scamming", d: "Any form of scam", type: "ban", lvl: 1, steps: ["1d", "3d", "10d", "30d", "Perma ban"] },
+  { cat: "Gameplay", off: "Duping", d: "Duplicating items", type: "ban", lvl: 1, steps: ["3d", "10d", "30d", "Perma ban"] },
+  { cat: "Gameplay", off: "Alt grinding", d: "Using alts to grind items or progress", type: "ban", lvl: 1, steps: ["1d", "3d", "7d", "14d", "Perma ban"] },
+  /* CHEATING */
+  { cat: "Cheating", off: "Unfair advantage / hacked client", d: "Killaura, reach, x-ray and similar clients or mods", type: "ban", lvl: 1, steps: ["30d", "60d", "90d", "Perma ban"] },
+  /* SEVERE */
+  { cat: "Severe", off: "Ban / mute evasion", d: "Match the punishment of the main account", type: "ban", lvl: 2, steps: ["Match main punishment"] },
+  { cat: "Severe", off: "Lag machines", d: "Machines that harm server performance", type: "ban", lvl: 2, steps: ["10d", "30d", "60d", "Perma ban"] },
+  { cat: "Severe", off: "Voicechat misuse", d: "Abuse or spam in voice chat", type: "ban", lvl: 2, steps: ["1d", "3d", "7d"] },
+  { cat: "Severe", off: "Doxxing / DDoS / IP leaking", d: "Leaking or attacking someone's personal data", type: "ban", lvl: 2, steps: ["Perma ban"] },
+  { cat: "Severe", off: "Server threats", d: "Threatening the server or community", type: "ban", lvl: 2, steps: ["Perma ban"] }
+];
+
+const TICKET_STEPS = [
+  { t: "Claim and rename", d: "Claim the ticket and rename it to progress-<yourname>." },
+  { t: "Introduce yourself", d: "Greet the player right away, e.g. \"Hey! I'm <name> and I'll be assisting you today.\"" },
+  { t: "Gather information", d: "Politely ask questions until you fully understand the issue." },
+  { t: "Investigate", d: "Check logs, inspect the area, review evidence or consult the relevant staff." },
+  { t: "Communicate clearly", d: "Explain your findings and actions in a respectful and concise way." },
+  { t: "Escalate if needed", d: "If you lack permissions or are unsure, hand over to the next rank. If a player is hostile, make a higher-up request instead of pushing through." },
+  { t: "Finish positively", d: "End with something friendly like \"Have a nice day!\". It changes everything." },
+  { t: "Close properly", d: "Rename to complete-<yourname> and use the close request (24h delay with a reason). Never force close unless a higher-up asks you to." }
+];
+
+const RENAMES = [
+  ["progress-<name>", "In progress, everything is going well"],
+  ["complete-<name>", "Resolved, waiting for the player to accept the close request"],
+  ["<rank>-needed-<name>", "You need the next rank up, a developer or an admin"]
+];
+
+const BOTCMDS = [
+  ["?<rank>", "Pings the specified rank, e.g. ?srmod"],
+  ["?administrator", "Pings Admins and Sr. Admins to take over"],
+  ["?developer", "Pings Developers to take over"]
+];
+
+const PANELS = [
+  ["General Support", ["Staff Team"]],
+  ["Bug Reports", ["Staff Team"]],
+  ["Connection Issues", ["Staff Team"]],
+  ["Player Reports", ["Moderator", "Sr. Mod"]],
+  ["Appeals", ["Moderator", "Sr. Mod"]],
+  ["Staff Reports", ["Staff Management"]],
+  ["Billing Support", ["Admin", "Sr. Admin", "Manager"]],
+  ["War Requests", ["Admin", "Sr. Admin", "Manager"]],
+  ["Nation Applications", ["Official Mapper"]]
+];
+
+const MENTOR_STEPS = [
+  { t: "Welcome your trainee", body: `<ul><li>Introduce yourself and congratulate them on joining.</li><li>Tell them you are available for any question.</li></ul><blockquote>"Hey! I'll be your mentor while you learn the team. Don't hesitate to ask me anything. There are no stupid questions."</blockquote>` },
+  { t: "Teach the basics", body: `<p>Before they moderate alone, cover the server rules, punishment guidelines, staff rules, staff chat, important commands, how to deal with reports and how to answer player questions.</p><p><b>Teach gradually.</b> Do not overload them with information.</p>` },
+  { t: "Observe them", body: `<p>Do not only explain, watch them moderate: chat issues, helping players, reviewing reports and using punishments. Then give constructive feedback.</p><blockquote>"Good job explaining the rule. Next time, make sure you warn before muting."</blockquote>` },
+  { t: "Stay available", body: `<p>Your trainee should feel comfortable asking anything. Never answer with "Figure it out." Instead, explain the answer, show an example and let them try it themselves.</p>` },
+  { t: "Teach decision making", body: `<p>Ask questions instead of giving answers every time. For a spamming player, do not say "Mute him." Ask: <i>What rule is being broken? What punishment do you think fits?</i> This builds independent thinking.</p>` },
+  { t: "Monitor progress", body: `<p>Check whether they can handle reports, use commands correctly, follow the punishment guidelines, stay calm in difficult situations, communicate professionally and ask for help when needed. Spend extra time on anything they struggle with.</p>` },
+  { t: "Lead by example", body: `<p>Trainees copy your behavior: stay respectful and patient, follow procedures, admit mistakes and act professionally. They learn more from watching you than from reading guides.</p>` }
+];
+const NEVER = ["Belittle new staff", "Ignore questions", "Make them feel stupid", "Give incorrect information", "Abuse authority", "Rush the mentoring process"];
+const HABITS = ["Check in regularly", "Ask how they are doing", "Encourage improvement", "Give positive feedback", "Correct mistakes respectfully", "Celebrate progress"];
+const READY = ["Understands the rules", "Uses punishments correctly", "Knows essential staff commands", "Handles reports independently", "Behaves professionally", "Is confident without constant help"];
+
+const POLICIES = [
+  { i: "⏱️", t: "Activity & inactivity", li: ["Meet the required hours for your rank in the activity channel.", "Report sudden or prolonged inactivity to Admin+ so tasks can be delegated.", "Unapproved inactivity can lead to warnings or removal.", "Temporary inactivity (exams, travel, emergencies) is fine with notice."] },
+  { i: "⚠️", t: "Strike system", li: ["Only Staff Management can issue strikes.", "3 strikes lead to removal from the team (blacklist possible for severe cases).", "Strikes may expire or stay permanent depending on the situation.", "Reasons: unprofessional behavior, repeated mistakes, permission abuse, dishonesty, ignoring the chain of command, leaking staff information."] },
+  { i: "🚀", t: "Promotions", li: ["Based on consistency, professionalism and quality of work, not time served alone.", "Factors: ticket activity, presence, communication, judgement, initiative and reliability.", "Decisions are made by upper management only."] }
+];
+/* ═══════════════ END OF EDITABLE CONTENT ═══════════════ */
+
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function toast(msg){
+  const t = $("#toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove("show"), 1700);
+}
+async function copy(text){
+  try { await navigator.clipboard.writeText(text); toast("Copied to clipboard"); }
+  catch { toast("Copy failed. Select and copy manually."); }
+}
+document.addEventListener("click", e => {
+  const el = e.target.closest("[data-copy]"); if (!el) return;
+  copy(el.getAttribute("data-copy"));
+});
+
+/* Top buttons */
+if (SITE.discord){ const b = $("#discordBtn"); b.href = SITE.discord; b.hidden = false; }
+if (SITE.ip){ const b = $("#ipBtn"); b.hidden = false; b.addEventListener("click", () => copy(SITE.ip)); }
+
+/* Stats */
+$("#sRanks").textContent = RANKS.length;
+$("#sPun").textContent = PUNISHMENTS.length;
+$("#sCmd").textContent = COMMANDS.reduce((n, g) => n + g.cmds.length, 0);
+$("#sPanels").textContent = PANELS.length;
+$("#year").textContent = new Date().getFullYear();
+
+/* Conduct */
+$("#conductGrid").innerHTML = CONDUCT.map((r, i) => `
+  <div class="card rule reveal"><div class="num">${i + 1}</div><div><h3>${esc(r.t)}</h3><p>${esc(r.d)}</p></div></div>`).join("");
+
+/* Ranks */
+$("#chain").innerHTML = RANKS.map((r, i) => `<span style="--c:${r.c}">${esc(r.n)}</span>${i < RANKS.length - 1 ? "<em>→</em>" : ""}`).join("");
+$("#rankList").innerHTML = RANKS.map((r, i) => `
+  <button type="button" class="rank-btn${i === 0 ? " on" : ""}" data-i="${i}" style="--c:${r.c}">
+    <span class="dot"></span>${esc(r.n)}<span class="lv">${i + 1}/${RANKS.length}</span>
+  </button>`).join("");
+function showRank(i){
+  const r = RANKS[i], up = RANKS[i + 1];
+  const el = $("#rankDetail");
+  el.style.setProperty("--c", r.c);
+  el.innerHTML = `
+    <h3>${esc(r.n)}</h3>
+    <div class="sub">Rank ${i + 1} of ${RANKS.length}</div>
+    <h4>Main duties</h4>
+    <ul>${r.duties.map(d => `<li>${esc(d)}</li>`).join("")}</ul>
+    <h4>Contact this rank when</h4>
+    <div class="box">${esc(r.contact)}</div>
+    <h4>Escalates to</h4>
+    <div class="box">${up ? `<b style="color:${up.c}">${esc(up.n)}</b>` : "Final authority. Nobody above this rank."}</div>`;
+}
+$("#rankList").addEventListener("click", e => {
+  const b = e.target.closest(".rank-btn"); if (!b) return;
+  document.querySelectorAll(".rank-btn").forEach(x => x.classList.toggle("on", x === b));
+  showRank(+b.dataset.i);
+});
+showRank(0);
+
+/* Commands */
+$("#cmdGrid").innerHTML = COMMANDS.map(g => `
+  <div class="card cmdcard reveal" style="--c:${g.c}">
+    <h3>${esc(g.rank)}</h3>
+    <div class="sub">${esc(g.note || "Includes everything from lower ranks")}</div>
+    ${g.cmds.map(([c, d]) => `<button type="button" class="cmd" data-copy="${esc(c)}"><code>${esc(c)}</code><span>${esc(d)}</span></button>`).join("")}
+  </div>`).join("");
+
+/* Punishments */
+let activeCat = "All";
+$("#chips").innerHTML = CATEGORIES.map(c => `<button type="button" class="chip${c === "All" ? " on" : ""}" data-cat="${esc(c)}">${esc(c)}</button>`).join("");
+$("#lvl").innerHTML = `<option value="-1">All ranks</option>` + LEVELS.map((l, i) => `<option value="${i}">${esc(l.label.replace("+", ""))}</option>`).join("");
+
+function stepTag(text, type){
+  const cls = /perma/i.test(text) ? "t-perm" : type === "mute" ? "t-mute" : "t-ban";
+  return `<span class="tag ${cls}">${esc(text)}</span>`;
+}
+function renderPun(){
+  const q = $("#search").value.trim().toLowerCase();
+  const lvl = +$("#lvl").value;
+  const rows = PUNISHMENTS.filter(p =>
+    (activeCat === "All" || p.cat === activeCat) &&
+    (lvl < 0 || p.lvl <= lvl) &&
+    (!q || (p.off + " " + p.d + " " + p.cat).toLowerCase().includes(q))
+  );
+  $("#punBody").innerHTML = rows.map(p => {
+    const L = LEVELS[p.lvl];
+    return `<tr>
+      <td class="off"><b>${esc(p.off)}</b><span>${esc(p.d)}</span></td>
+      <td><span class="tag t-type-${p.type}">${p.type === "mute" ? "Mute" : "Ban"}</span></td>
+      <td><div class="steps-row">${p.steps.map((s, i) => (i ? "<i>›</i>" : "") + stepTag(s, p.type)).join("")}</div></td>
+      <td><span class="tag" style="color:${L.color};background:color-mix(in srgb,${L.color} 14%,transparent)">${esc(L.label)}</span></td>
+    </tr>`;
+  }).join("");
+  $("#punEmpty").hidden = rows.length > 0;
+}
+$("#chips").addEventListener("click", e => {
+  const b = e.target.closest(".chip"); if (!b) return;
+  activeCat = b.dataset.cat;
+  document.querySelectorAll(".chip").forEach(c => c.classList.toggle("on", c === b));
+  renderPun();
+});
+$("#search").addEventListener("input", renderPun);
+$("#lvl").addEventListener("change", renderPun);
+renderPun();
+
+/* Tickets */
+$("#ticketSteps").innerHTML = TICKET_STEPS.map(s => `<div class="step"><div><h3>${esc(s.t)}</h3><p>${esc(s.d)}</p></div></div>`).join("");
+const line = ([c, d]) => `<button type="button" class="copyline" data-copy="${esc(c)}"><code>${esc(c)}</code><span>${esc(d)}</span></button>`;
+$("#renames").innerHTML = RENAMES.map(line).join("");
+$("#botcmds").innerHTML = BOTCMDS.map(line).join("");
+$("#panelBody").innerHTML = PANELS.map(([p, a]) => `<tr><td><b>${esc(p)}</b></td><td>${a.map(x => `<span class="pill">${esc(x)}</span>`).join("")}</td></tr>`).join("");
+
+/* Mentoring */
+$("#mentorSteps").innerHTML = MENTOR_STEPS.map((s, i) => `
+  <details${i === 0 ? " open" : ""}><summary><span class="n">${i + 1}</span>${esc(s.t)}</summary><div class="body">${s.body}</div></details>`).join("");
+$("#never").innerHTML = NEVER.map(x => `<li>${esc(x)}</li>`).join("");
+$("#habits").innerHTML = HABITS.map(x => `<li>${esc(x)}</li>`).join("");
+$("#ready").innerHTML = READY.map(x => `<li>${esc(x)}</li>`).join("");
+
+/* Policies */
+$("#polGrid").innerHTML = POLICIES.map(p => `
+  <div class="card pol reveal"><h3><span>${p.i}</span>${esc(p.t)}</h3><ul>${p.li.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>`).join("");
+
+/* Scroll spy */
+const links = [...document.querySelectorAll("#nav a")];
+const sections = links.map(a => document.querySelector(a.getAttribute("href"))).filter(Boolean);
+if ("IntersectionObserver" in window){
+  const spy = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if (en.isIntersecting) links.forEach(a => a.classList.toggle("active", a.getAttribute("href") === "#" + en.target.id));
+    });
+  }, { rootMargin: "-45% 0px -50% 0px" });
+  sections.forEach(s => spy.observe(s));
+
+  const rv = new IntersectionObserver((entries, o) => {
+    entries.forEach(en => { if (en.isIntersecting){ en.target.classList.add("in"); o.unobserve(en.target); } });
+  }, { threshold: .08 });
+  document.querySelectorAll(".reveal").forEach(el => rv.observe(el));
+} else {
+  document.querySelectorAll(".reveal").forEach(el => el.classList.add("in"));
+}
+
+/* Back to top */
+const topBtn = $("#top");
+addEventListener("scroll", () => topBtn.classList.toggle("show", scrollY > 700), { passive: true });
+topBtn.addEventListener("click", () => scrollTo({ top: 0 }));
+</script>
+</body>
+</html>
